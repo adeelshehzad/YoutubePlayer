@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.adeel.youtubeapp.utils.REQUEST_AUTHORIZATION
+import com.adeel.youtubeapp.utils.YoutubePlayerException
 import com.adeel.youtubeapp.viewmodel.YoutubePlayerViewModel
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 
@@ -38,6 +39,8 @@ open class BaseFragment(@LayoutRes layoutId: Int) : Fragment(layoutId) {
                     error.intent,
                     REQUEST_AUTHORIZATION
                 )
+            } else if (error is YoutubePlayerException) {
+                Toast.makeText(activity, error.message, Toast.LENGTH_LONG).show()
             } else {
                 error.printStackTrace()
                 Toast.makeText(activity, "Some error occured", Toast.LENGTH_LONG).show()
@@ -60,7 +63,7 @@ open class BaseFragment(@LayoutRes layoutId: Int) : Fragment(layoutId) {
         when (requestCode) {
             REQUEST_AUTHORIZATION -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    playerViewModel.fetchYoutubePlaylist("",false)
+                    playerViewModel.fetchYoutubePlaylist("", false)
                 }
             }
         }

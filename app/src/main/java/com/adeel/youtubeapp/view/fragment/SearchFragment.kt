@@ -4,6 +4,7 @@ package com.adeel.youtubeapp.view.fragment
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -60,12 +61,24 @@ class SearchFragment : BaseFragment(R.layout.fragment_search), View.OnClickListe
         observeViewModel(rvSearch, pbSearchLoading)
 
         btSearch.setOnClickListener {
-            searchQuery = etSearchQuery.text.toString()
-            if (!TextUtils.isEmpty(searchQuery)) {
-                playerViewModel.getSearchResult(searchQuery, "", false)
-            } else {
-                Toast.makeText(activity, "Search text cannot be empty", Toast.LENGTH_LONG).show()
+            searchVideos()
+        }
+
+        etSearchQuery.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                searchVideos()
             }
+
+            false
+        }
+    }
+
+    private fun searchVideos() {
+        searchQuery = etSearchQuery.text.toString()
+        if (!TextUtils.isEmpty(searchQuery)) {
+            playerViewModel.getSearchResult(searchQuery, "", false)
+        } else {
+            Toast.makeText(activity, "Search text cannot be empty", Toast.LENGTH_LONG).show()
         }
     }
 

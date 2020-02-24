@@ -1,6 +1,7 @@
 package com.adeel.youtubeapp.model
 
 import android.text.TextUtils
+import com.adeel.youtubeapp.utils.YoutubePlayerException
 import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.model.Playlist
 import com.google.api.services.youtube.model.PlaylistItem
@@ -20,8 +21,9 @@ class YoutubePlaylistAPI(private val youtubeService: YouTube) {
                     .setMaxResults(8L)
                     .execute()
 
-                if (result.items.isEmpty())
-                    throw Exception("Playlist empty")
+                if (result.items.isEmpty()) {
+                    throw YoutubePlayerException("Playlist empty")
+                }
 
                 emitter.onNext(getPlaylistResponse(result.items, result.nextPageToken ?: ""))
             } catch (e: Exception) {
@@ -39,8 +41,9 @@ class YoutubePlaylistAPI(private val youtubeService: YouTube) {
                     .setMaxResults(10L)
                     .execute()
 
-                if (playlistVidoesList.items.isEmpty())
-                    throw Exception("Playlist empty")
+                if (playlistVidoesList.items.isEmpty()) {
+                    throw YoutubePlayerException("No videos found")
+                }
 
                 val videoIds = getVideoIds(playlistVidoesList.items)
 
@@ -68,7 +71,7 @@ class YoutubePlaylistAPI(private val youtubeService: YouTube) {
                     .execute()
 
                 if (searchResponse.items.isEmpty())
-                    throw Exception("No results")
+                    throw YoutubePlayerException("No videos found")
 
                 val videosList =
                     getSearchVideosInfo(searchResponse.items, searchResponse.nextPageToken ?: "")
